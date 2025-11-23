@@ -147,49 +147,48 @@ fun HomeScreen(padding: PaddingValues, viewModel: RouteAnimationViewModel = hilt
 
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             Button(
                                 onClick = { viewModel.startMarkerAnimation() },
                                 modifier = Modifier
                                     .weight(1f)
-                                    .height(48.dp),
+                                    .height(50.dp),
                                 enabled = !isAnimating
                             ) {
                                 Icon(
                                     Icons.Filled.PlayArrow,
                                     contentDescription = null,
-                                    modifier = Modifier.padding(end = 4.dp)
+
                                 )
-                                Text("Animate")
+                                Text("Animate", fontSize = 10.sp)
                             }
 
                             Button(
                                 onClick = { viewModel.resetAnimation() },
                                 modifier = Modifier
                                     .weight(1f)
-                                    .height(48.dp)
+                                    .height(50.dp)
                             ) {
                                 Icon(
                                     Icons.Filled.Refresh,
                                     contentDescription = null,
-                                    modifier = Modifier.padding(end = 4.dp)
+
                                 )
-                                Text("Reset")
+                                Text("Reset", fontSize = 10.sp)
                             }
 
                             Button(
                                 onClick = { viewModel.clearSelections() },
                                 modifier = Modifier
                                     .weight(1f)
-                                    .height(48.dp)
+                                    .height(50.dp)
                             ) {
                                 Icon(
                                     Icons.Filled.Close,
                                     contentDescription = null,
-                                    modifier = Modifier.padding(end = 4.dp)
                                 )
-                                Text("Clear")
+                                Text("Clear", fontSize = 10.sp)
                             }
                         }
                     }
@@ -315,7 +314,7 @@ private fun MapViewContainer(
         mapView.getMapAsync { googleMap ->
             googleMap.clear()
 
-            // Add start marker
+
             googleMap.addMarker(
                 MarkerOptions()
                     .position(route.startPoint)
@@ -323,7 +322,7 @@ private fun MapViewContainer(
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
             )
 
-            // Add end marker
+
             googleMap.addMarker(
                 MarkerOptions()
                     .position(route.endPoint)
@@ -331,17 +330,17 @@ private fun MapViewContainer(
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
             )
 
-            // Add animated marker
+
             if (markerPosition != null) {
                 googleMap.addMarker(
                     MarkerOptions()
                         .position(markerPosition)
                         .title("Vehicle")
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))
                 )
             }
 
-            // Draw polyline
+
             googleMap.addPolyline(
                 PolylineOptions()
                     .addAll(route.polylinePoints)
@@ -349,7 +348,7 @@ private fun MapViewContainer(
                     .width(8f)
             )
 
-            // Animate camera
+
             val bounds = com.google.android.gms.maps.model.LatLngBounds.builder()
                 .include(route.startPoint)
                 .include(route.endPoint)
@@ -357,12 +356,6 @@ private fun MapViewContainer(
             googleMap.animateCamera(
                 CameraUpdateFactory.newLatLngBounds(bounds, 200)
             )
-        }
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            // Cleanup if needed
         }
     }
 }

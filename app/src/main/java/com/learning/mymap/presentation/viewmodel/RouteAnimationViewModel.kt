@@ -81,8 +81,7 @@ class RouteAnimationViewModel @Inject constructor(val repository: RouteRepositor
     fun clearSelections() {
         _startSearchQuery.value = ""
         _destinationSearchQuery.value = ""
-        _startSuggestions.value = emptyList()
-        _destinationSuggestions.value = emptyList()
+        _selectedStart.value = null
         _selectedDestination.value = null
         _route.value = null
         _markerPosition.value = null
@@ -131,7 +130,7 @@ class RouteAnimationViewModel @Inject constructor(val repository: RouteRepositor
         viewModelScope.launch {
             _isAnimating.value = true
             val polylinePoints = currentRoute.polylinePoints
-            val animationDuration = 5000L // 5 seconds
+            val animationDuration = 5000L
             val stepDuration = animationDuration / polylinePoints.size
 
             for (point in polylinePoints) {

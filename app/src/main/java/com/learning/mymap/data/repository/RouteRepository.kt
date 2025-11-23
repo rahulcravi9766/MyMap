@@ -4,41 +4,61 @@ import com.google.android.gms.maps.model.LatLng
 import com.learning.mymap.data.model.LocationSuggestion
 import com.learning.mymap.data.model.Route
 import kotlinx.coroutines.delay
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 class RouteRepository {
 
     private val mockLocations = listOf(
         LocationSuggestion(
-            "1", "Downtown Plaza", "123 Main St, Downtown",
-            LatLng(40.7128, -74.0060)
+            "1", "Vidhana Soudha", "Dr Rajendra Prasad Rd, Cubbon Park",
+            LatLng(13.1919, 77.5937)
         ),
         LocationSuggestion(
-            "2", "Central Park", "Central Park, Midtown",
-            LatLng(40.7829, -73.9654)
+            "2", "Cubbon Park", "Cubbon Park, Vasanth Nagar",
+            LatLng(13.1890, 77.5941)
         ),
         LocationSuggestion(
-            "3", "Times Square", "Times Square, Midtown",
-            LatLng(40.7580, -73.9855)
+            "3", "Bangalore Palace", "Palace Road, High Grounds",
+            LatLng(13.2046, 77.6110)
         ),
         LocationSuggestion(
-            "4", "Grand Central", "42 E 42nd St, Midtown",
-            LatLng(40.7527, -73.9772)
+            "4", "Lalbagh Botanical Garden", "Lalbagh Botanical Garden, South Bangalore",
+            LatLng(13.1759, 77.5846)
         ),
         LocationSuggestion(
-            "5", "Brooklyn Bridge", "Brooklyn Bridge, Brooklyn",
-            LatLng(40.7061, -73.9969)
+            "5", "Indiranagar Lake", "100 Feet Road, Indiranagar",
+            LatLng(13.1964, 77.6409)
         ),
         LocationSuggestion(
-            "6", "Statue of Liberty", "Liberty Island, NY",
-            LatLng(40.6892, -74.0445)
+            "6", "Ulsoor Lake", "Ulsoor Lake, East Bangalore",
+            LatLng(13.1815, 77.6205)
         ),
         LocationSuggestion(
-            "7", "Empire State Building", "350 5th Ave, Midtown",
-            LatLng(40.7484, -73.9857)
+            "7", "Koramangala", "Koramangala, South Bangalore",
+            LatLng(13.0352, 77.6245)
         ),
         LocationSuggestion(
-            "8", "One World Trade", "285 Fulton St, Lower Manhattan",
-            LatLng(40.7126, -74.0129)
+            "8", "MG Road", "MG Road, Downtown Bangalore",
+            LatLng(13.1939, 77.6009)
+        ),
+        LocationSuggestion(
+            "9", "Whitefield", "Whitefield, East Bangalore",
+            LatLng(13.1624, 77.7422)
+        ),
+        LocationSuggestion(
+            "10", "Jayanagar", "4th Block, Jayanagar, South Bangalore",
+            LatLng(13.0288, 77.5940)
+        ),
+        LocationSuggestion(
+            "11", "Rajajinagar", "Rajajinagar, West Bangalore",
+            LatLng(13.1848, 77.5553)
+        ),
+        LocationSuggestion(
+            "12", "Mathikere Market", "Mathikere, North Bangalore",
+            LatLng(13.2198, 77.5710)
         )
     )
 
@@ -55,7 +75,7 @@ class RouteRepository {
     }
 
     suspend fun calculateRoute(start: LatLng, end: LatLng): Route {
-        delay(500) // Simulate API call
+        delay(500)
         val polylinePoints = generatePolylinePoints(start, end)
         return Route(
             startPoint = start,
@@ -74,8 +94,7 @@ class RouteRepository {
             val fraction = i.toDouble() / steps
             val lat = start.latitude + (end.latitude - start.latitude) * fraction
             val lng = start.longitude + (end.longitude - start.longitude) * fraction
-            // Add slight curvature for realism
-            val curve = Math.sin(fraction * Math.PI) * 0.0002
+            val curve = sin(fraction * Math.PI) * 0.0002
             points.add(LatLng(lat + curve, lng))
         }
         return points
@@ -90,10 +109,10 @@ class RouteRepository {
         val earthRadiusKm = 6371
         val dLat = Math.toRadians(lat2 - lat1)
         val dLon = Math.toRadians(lon2 - lon1)
-        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-                Math.sin(dLon / 2) * Math.sin(dLon / 2)
-        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        val a = sin(dLat / 2) * sin(dLat / 2) +
+                cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) *
+                sin(dLon / 2) * sin(dLon / 2)
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
         return earthRadiusKm * c
     }
 
