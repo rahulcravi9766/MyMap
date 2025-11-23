@@ -2,6 +2,7 @@ package com.learning.mymap.data.repository
 
 import com.google.android.gms.maps.model.LatLng
 import com.learning.mymap.data.model.LocationSuggestion
+import com.learning.mymap.data.model.Route
 import kotlinx.coroutines.delay
 
 class RouteRepository {
@@ -51,5 +52,53 @@ class RouteRepository {
                         location.address.contains(query, ignoreCase = true)
             }
         }
+    }
+
+    suspend fun calculateRoute(start: LatLng, end: LatLng): Route {
+        delay(500) // Simulate API call
+        val polylinePoints = generatePolylinePoints(start, end)
+        return Route(
+            startPoint = start,
+            endPoint = end,
+            polylinePoints = polylinePoints,
+            distance = String.format("%.2f km", calculateDistance(start, end)),
+            duration = "${calculateDuration(start, end)} mins"
+        )
+    }
+
+    private fun generatePolylinePoints(start: LatLng, end: LatLng): List<LatLng> {
+        val points = mutableListOf<LatLng>()
+        val steps = 50
+
+        for (i in 0..steps) {
+            val fraction = i.toDouble() / steps
+            val lat = start.latitude + (end.latitude - start.latitude) * fraction
+            val lng = start.longitude + (end.longitude - start.longitude) * fraction
+            // Add slight curvature for realism
+            val curve = Math.sin(fraction * Math.PI) * 0.0002
+            points.add(LatLng(lat + curve, lng))
+        }
+        return points
+    }
+
+    private fun calculateDistance(start: LatLng, end: LatLng): Double {
+        val lat1 = start.latitude
+        val lon1 = start.longitude
+        val lat2 = end.latitude
+        val lon2 = end.longitude
+
+        val earthRadiusKm = 6371
+        val dLat = Math.toRadians(lat2 - lat1)
+        val dLon = Math.toRadians(lon2 - lon1)
+        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2)
+        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        return earthRadiusKm * c
+    }
+
+    private fun calculateDuration(start: LatLng, end: LatLng): Int {
+        val distance = calculateDistance(start, end)
+        return (distance / 40 * 60).toInt()
     }
 }
